@@ -17,8 +17,22 @@ public class PictureProducer {
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	public void sendMessage(Picture p) throws JsonProcessingException {
+		StringBuilder sb = new StringBuilder();
+		sb.append(p.getSource());
+		sb.append('.');
+		
+		if(p.getSize() > 4000) {
+			sb.append("large");
+		}else {
+			sb.append("small");
+		}
+		sb.append('.');
+		sb.append(p.getType());
+		
+		String routingKey = sb.toString();
+		
 		String json = objectMapper.writeValueAsString(p);
-		rabbitTemplate.convertAndSend("x.picture", p.getType(), json);
+		rabbitTemplate.convertAndSend("x.picture.2", routingKey, json);
 	}
 
 }
